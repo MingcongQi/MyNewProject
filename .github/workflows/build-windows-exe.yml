@@ -23,7 +23,7 @@ jobs:
         distribution: 'temurin'
         
     - name: Cache Gradle packages
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: |
           ~/.gradle/caches
@@ -76,13 +76,13 @@ jobs:
         Get-ChildItem -Path build/jpackage/output -Recurse
       
     - name: Upload Windows executable
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: lambda-client-windows-exe
         path: build/jpackage/output/*.exe
         
     - name: Upload Windows installer
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: lambda-client-windows-installer
         path: build/jpackage/output/*.msi
