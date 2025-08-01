@@ -42,13 +42,18 @@ jobs:
     - name: Prepare jpackage input
       run: ./gradlew prepareApp
       
+    - name: List input files for debugging
+      run: |
+        echo "Files in jpackage input directory:"
+        Get-ChildItem -Path build/jpackage/input -Recurse
+      
     - name: Create Windows executable
       run: |
         jpackage `
           --input build/jpackage/input `
           --dest build/jpackage/output `
           --name LambdaClient `
-          --main-jar lambda-client-app-0.0.1-SNAPSHOT.jar `
+          --main-jar lambda-client-app.jar `
           --type exe `
           --win-console `
           --app-version 1.0.0 `
@@ -62,7 +67,7 @@ jobs:
           --input build/jpackage/input `
           --dest build/jpackage/output `
           --name LambdaClient `
-          --main-jar lambda-client-app-0.0.1-SNAPSHOT.jar `
+          --main-jar lambda-client-app.jar `
           --type msi `
           --win-console `
           --app-version 1.0.0 `

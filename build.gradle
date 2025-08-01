@@ -49,6 +49,14 @@ task prepareApp(type: Copy) {
     from 'build/libs'
     into 'build/jpackage/input'
     include '*.jar'
+    
+    // Rename the jar to a consistent name for jpackage
+    rename { filename ->
+        if (filename.endsWith('.jar')) {
+            return 'lambda-client-app.jar'
+        }
+        return filename
+    }
 }
 
 // Task to create Windows executable using jpackage
@@ -63,7 +71,7 @@ task createWindowsExe(type: Exec) {
         '--input', 'build/jpackage/input',
         '--dest', 'build/jpackage/output',
         '--name', 'LambdaClient',
-        '--main-jar', "lambda-client-app-${version}.jar",
+        '--main-jar', 'lambda-client-app.jar',
         '--type', 'exe',
         '--win-console',
         '--app-version', version,
