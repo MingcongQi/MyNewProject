@@ -46,6 +46,11 @@ tasks.named('test') {
 // Task to prepare application for jpackage
 task prepareApp(type: Copy) {
     dependsOn bootJar
+    
+    doFirst {
+        mkdir 'build/jpackage/input'
+    }
+    
     from 'build/libs'
     into 'build/jpackage/input'
     include '*.jar'

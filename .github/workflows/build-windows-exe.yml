@@ -39,13 +39,33 @@ jobs:
     - name: Build JAR
       run: ./gradlew bootJar
       
+    - name: Verify JAR was built
+      run: |
+        echo "Checking build/libs directory:"
+        if (Test-Path "build/libs") {
+          Get-ChildItem -Path build/libs
+        } else {
+          echo "build/libs directory not found!"
+          exit 1
+        }
+      
     - name: Prepare jpackage input
       run: ./gradlew prepareApp
       
     - name: List input files for debugging
       run: |
         echo "Files in jpackage input directory:"
-        Get-ChildItem -Path build/jpackage/input -Recurse
+        if (Test-Path "build/jpackage/input") {
+          Get-ChildItem -Path build/jpackage/input -Recurse
+        } else {
+          echo "Directory build/jpackage/input does not exist!"
+        }
+        echo "Files in build/libs directory:"
+        if (Test-Path "build/libs") {
+          Get-ChildItem -Path build/libs -Recurse
+        } else {
+          echo "Directory build/libs does not exist!"
+        }
       
     - name: Create Windows executable
       run: |
