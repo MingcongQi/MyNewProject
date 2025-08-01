@@ -160,7 +160,24 @@ Create a production JAR:
 
 ## Windows Deployment
 
-### Running as Windows Service
+### Option 1: Download Pre-built Executable
+
+1. Go to the [Releases page](https://github.com/MingcongQi/MyNewProject/releases)
+2. Download the latest `LambdaClient.exe` or `LambdaClient.msi` installer
+3. Run the executable directly (no Java installation required)
+
+### Option 2: Build Windows Executable Locally
+
+Requirements: JDK 21 installed
+
+```cmd
+# Build the executable
+gradlew createWindowsExe
+
+# The executable will be created in build/jpackage/output/
+```
+
+### Option 3: Running as Windows Service
 
 1. Build the JAR file
 2. Use a tool like NSSM (Non-Sucking Service Manager) to create a Windows service:
@@ -172,6 +189,14 @@ nssm set LambdaClientApp AppParameters "-jar C:\path\to\lambda-client-app-0.0.1-
 nssm set LambdaClientApp AppDirectory "C:\path\to\app"
 nssm start LambdaClientApp
 ```
+
+### GitHub Actions Automatic Builds
+
+This repository is configured with GitHub Actions to automatically build Windows executables:
+
+- **On every push to main**: Creates executable artifacts
+- **On tagged releases**: Creates GitHub releases with downloadable executables
+- **Manual trigger**: Can be triggered manually from the Actions tab
 
 ## Troubleshooting
 

@@ -42,3 +42,32 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+// Task to prepare application for jpackage
+task prepareApp(type: Copy) {
+    dependsOn bootJar
+    from 'build/libs'
+    into 'build/jpackage/input'
+    include '*.jar'
+}
+
+// Task to create Windows executable using jpackage
+task createWindowsExe(type: Exec) {
+    dependsOn prepareApp
+    
+    doFirst {
+        mkdir 'build/jpackage/output'
+    }
+    
+    commandLine 'jpackage',
+        '--input', 'build/jpackage/input',
+        '--dest', 'build/jpackage/output',
+        '--name', 'LambdaClient',
+        '--main-jar', "lambda-client-app-${version}.jar",
+        '--type', 'exe',
+        '--win-console',
+        '--app-version', version,
+        '--description', 'Spring Boot Lambda HTTP Client',
+        '--vendor', 'Your Company',
+        '--copyright', 'Copyright 2024'
+}
