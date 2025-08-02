@@ -37,7 +37,7 @@ tasks.named('test') {
 
 // Task to prepare application for jpackage
 task prepareApp(type: Copy) {
-    dependsOn bootJar
+    dependsOn jar  // Changed from bootJar to jar
     
     doFirst {
         mkdir 'build/jpackage/input'
@@ -72,7 +72,25 @@ task createWindowsExe(type: Exec) {
         '--type', 'exe',
         '--win-console',
         '--app-version', version,
-        '--description', 'Spring Boot Lambda HTTP Client',
-        '--vendor', 'Your Company',
+        '--description', 'Pure Java Lambda HTTP Client',
+        '--vendor', 'Lambda Client Team',
         '--copyright', 'Copyright 2024'
+}
+
+// Create a fat JAR with all dependencies
+jar {
+    archiveBaseName = 'lambda-client-app'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    
+    manifest {
+        attributes(
+            'Main-Class': 'com.example.lambdaclient.SimpleLambdaClient',
+            'Implementation-Title': 'Lambda HTTP Client',
+            'Implementation-Version': project.version
+        )
+    }
+    
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }
