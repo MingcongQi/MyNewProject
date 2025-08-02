@@ -40,7 +40,7 @@ jobs:
       shell: bash
       
     - name: Build JAR
-      run: ./gradlew.bat bootJar --info
+      run: ./gradlew.bat build --info
       
     - name: Verify JAR was built
       run: |
@@ -53,7 +53,19 @@ jobs:
         }
       
     - name: Prepare jpackage input
-      run: ./gradlew.bat prepareApp
+      run: |
+        # Create input directory
+        New-Item -ItemType Directory -Force -Path "build/jpackage/input"
+        
+        # Copy the JAR file and rename it
+        $jarFile = Get-ChildItem -Path "build/libs" -Filter "*.jar" | Select-Object -First 1
+        if ($jarFile) {
+          Copy-Item -Path $jarFile.FullName -Destination "build/jpackage/input/lambda-client-app.jar"
+          echo "Copied $($jarFile.Name) to lambda-client-app.jar"
+        } else {
+          echo "No JAR file found in build/libs!"
+          exit 1
+        }
       
     - name: List input files for debugging
       run: |

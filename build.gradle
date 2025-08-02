@@ -1,7 +1,6 @@
 plugins {
-    id 'org.springframework.boot' version '3.2.0'
-    id 'io.spring.dependency-management' version '1.1.4'
     id 'java'
+    id 'application'
 }
 
 group = 'com.example'
@@ -15,28 +14,21 @@ repositories {
     mavenCentral()
 }
 
+// Set the main class for the application
+application {
+    mainClass = 'com.example.lambdaclient.SimpleLambdaClient'
+}
+
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    
-    // AWS SDK v2
-    implementation platform('software.amazon.awssdk:bom:2.21.29')
-    implementation 'software.amazon.awssdk:lambda'
-    implementation 'software.amazon.awssdk:auth'
-    
-    // HTTP Client
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
-    
     // JSON processing
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.0'
     
-    // Logging
-    implementation 'org.springframework.boot:spring-boot-starter-logging'
+    // Logging (simple)
+    implementation 'org.slf4j:slf4j-simple:2.0.9'
     
     // Testing
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
-    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {

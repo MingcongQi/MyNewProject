@@ -1,16 +1,18 @@
-# AWS Lambda HTTP Client - Spring Boot Application
+# AWS Lambda HTTP Client - Pure Java Application
 
-A Spring Boot application built with Java 21 and Gradle that sends HTTP requests to AWS Lambda functions via Function URLs.
+A lightweight, pure Java application that sends HTTP requests to AWS Lambda functions via Function URLs. **No ports opened** - this is a true client application that doesn't act as a web server.
 
 ## Features
 
-- Spring Boot 3.2 with Java 21
-- Reactive HTTP client using WebFlux
-- AWS SDK integration
-- RESTful API endpoints
+- Pure Java 21 application (no Spring Boot)
+- No web server - doesn't open any ports
+- Interactive console interface
+- Command-line interface support
 - Configurable Lambda function URL
-- Comprehensive error handling and logging
-- Windows compatible
+- JSON request/response handling
+- Health check functionality
+- Windows executable generation
+- Cross-platform compatibility
 
 ## Prerequisites
 
