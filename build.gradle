@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.example'
-version = '0.0.1-SNAPSHOT'
+version = '2.0.0'
 
 java {
     sourceCompatibility = '21'
@@ -50,7 +50,7 @@ task prepareApp(type: Copy) {
     // Rename the jar to a consistent name for jpackage
     rename { filename ->
         if (filename.endsWith('.jar')) {
-            return 'lambda-client-app.jar'
+            return 'lambda-client-v2.jar'
         }
         return filename
     }
@@ -67,26 +67,33 @@ task createWindowsExe(type: Exec) {
     commandLine 'jpackage',
         '--input', 'build/jpackage/input',
         '--dest', 'build/jpackage/output',
-        '--name', 'LambdaClient',
-        '--main-jar', 'lambda-client-app.jar',
+        '--name', 'LambdaClientV2',
+        '--main-jar', 'lambda-client-v2.jar',
         '--type', 'exe',
         '--win-console',
-        '--app-version', version,
-        '--description', 'Pure Java Lambda HTTP Client',
+        '--app-version', '2.0.0',
+        '--description', 'Pure Java Lambda HTTP Client v2.0 - No Ports',
         '--vendor', 'Lambda Client Team',
         '--copyright', 'Copyright 2024'
 }
 
 // Create a fat JAR with all dependencies
 jar {
-    archiveBaseName = 'lambda-client-app'
+    archiveBaseName = 'lambda-client-pure-java'
+    archiveVersion = '2.0.0'
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     
     manifest {
         attributes(
             'Main-Class': 'com.example.lambdaclient.SimpleLambdaClient',
-            'Implementation-Title': 'Lambda HTTP Client',
-            'Implementation-Version': project.version
+            'Implementation-Title': 'Lambda HTTP Client - Pure Java',
+            'Implementation-Version': '2.0.0',
+            'Implementation-Vendor': 'Lambda Client Team',
+            'Specification-Title': 'Pure Java Lambda Client',
+            'Specification-Version': '2.0',
+            'Built-By': System.getProperty('user.name'),
+            'Built-Date': new Date().toString(),
+            'Application-Name': 'Lambda HTTP Client v2.0'
         )
     }
     

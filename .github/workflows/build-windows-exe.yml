@@ -60,8 +60,8 @@ jobs:
         # Copy the JAR file and rename it
         $jarFile = Get-ChildItem -Path "build/libs" -Filter "*.jar" | Select-Object -First 1
         if ($jarFile) {
-          Copy-Item -Path $jarFile.FullName -Destination "build/jpackage/input/lambda-client-app.jar"
-          echo "Copied $($jarFile.Name) to lambda-client-app.jar"
+          Copy-Item -Path $jarFile.FullName -Destination "build/jpackage/input/lambda-client-v2.jar"
+          echo "Copied $($jarFile.Name) to lambda-client-v2.jar"
         } else {
           echo "No JAR file found in build/libs!"
           exit 1
@@ -87,12 +87,12 @@ jobs:
         jpackage `
           --input build/jpackage/input `
           --dest build/jpackage/output `
-          --name LambdaClient `
-          --main-jar lambda-client-app.jar `
+          --name LambdaClientV2 `
+          --main-jar lambda-client-v2.jar `
           --type exe `
           --win-console `
-          --app-version 1.0.0 `
-          --description "Spring Boot Lambda HTTP Client" `
+          --app-version 2.0.0 `
+          --description "Pure Java Lambda HTTP Client v2.0 - No Ports" `
           --vendor "Lambda Client Team" `
           --copyright "Copyright 2024"
       
@@ -101,12 +101,12 @@ jobs:
         jpackage `
           --input build/jpackage/input `
           --dest build/jpackage/output `
-          --name LambdaClient `
-          --main-jar lambda-client-app.jar `
+          --name LambdaClientV2 `
+          --main-jar lambda-client-v2.jar `
           --type msi `
           --win-console `
-          --app-version 1.0.0 `
-          --description "Spring Boot Lambda HTTP Client" `
+          --app-version 2.0.0 `
+          --description "Pure Java Lambda HTTP Client v2.0 - No Ports" `
           --vendor "Lambda Client Team" `
           --copyright "Copyright 2024"
       

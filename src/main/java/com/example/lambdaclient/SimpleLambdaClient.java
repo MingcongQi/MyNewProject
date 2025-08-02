@@ -36,10 +36,10 @@ public class SimpleLambdaClient {
     
     private static void printWelcomeMessage() {
         System.out.println("╔══════════════════════════════════════════════════════════════╗");
-        System.out.println("║              AWS Lambda HTTP Client (Pure Java)             ║");
+        System.out.println("║                 Lambda HTTP Client v2.0                     ║");
         System.out.println("╠══════════════════════════════════════════════════════════════╣");
-        System.out.println("║ This client sends HTTP requests directly to AWS Lambda      ║");
-        System.out.println("║ No ports opened - Pure client application                   ║");
+        System.out.println("║ Pure Java client - No ports opened, No firewall issues     ║");
+        System.out.println("║ Sends HTTP requests directly to AWS Lambda functions        ║");
         System.out.println("╚══════════════════════════════════════════════════════════════╝");
         System.out.println();
         System.out.println("Lambda URL: " + config.getFunctionUrl());
