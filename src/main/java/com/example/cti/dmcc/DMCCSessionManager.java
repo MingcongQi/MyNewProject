@@ -1,4 +1,4 @@
-package com.example.lambdaclient.cti.dmcc;
+package com.example.cti.dmcc;
 
 import java.util.Arrays;
 import java.util.List;

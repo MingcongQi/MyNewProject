@@ -1,4 +1,4 @@
-package com.example.lambdaclient.cti.events;
+package com.example.cti.events;
 
 import javax.xml.bind.annotation.*;
 import javax.validation.constraints.NotNull;
@@ -6,51 +6,51 @@ import java.time.Instant;
 import java.util.Objects;
 
 /**
- * ECMA-269 CSTA Phase III EstablishedEvent
+ * ECMA-269 CSTA Phase III DeliveredEvent
  * 
- * From ECMA-269 Section 17.2.8, Figure 17-40 "Established Event":
- * "This event indicates that a device has answered or has been connected to a call."
+ * From ECMA-269 Section 17.2.5, Figure 17-36 "Delivered Event":
+ * "This event indicates that a call is being presented to a device in either 
+ * the Ringing or Entering Distribution modes of the alerting state."
  * 
  * Common situations that generate this event include:
- * - A call has been answered at a device (user has manually gone off-hook)
- * - The AnswerCall service has been successfully invoked
- * - A call has been picked up by another device
- * - A device has been added to an existing call
+ * - A call has been assigned to a device and that device is alerting
+ * - A call has been assigned to a distribution device such as an ACD, 
+ *   routing device, or hunt group
  * 
  * Avaya Documentation Reference:
- * @see <a href="https://support.avaya.com/elmodocs2/cmapi/docs/xml/ch/ecma/csta/binding/EstablishedEvent.html">Avaya EstablishedEvent</a>
+ * @see <a href="https://support.avaya.com/elmodocs2/cmapi/docs/xml/ch/ecma/csta/binding/DeliveredEvent.html">Avaya DeliveredEvent</a>
  * 
  * ECMA-269 Standard Reference:
- * @see <a href="https://www.ecma-international.org/computer-supported-telecommunications-applications-csta/">ECMA-269 Section 17.2.8</a>
+ * @see <a href="https://www.ecma-international.org/computer-supported-telecommunications-applications-csta/">ECMA-269 Section 17.2.5</a>
  */
-@XmlRootElement(name = "EstablishedEvent", namespace = CSTAEvent.CSTA_NAMESPACE)
+@XmlRootElement(name = "DeliveredEvent", namespace = CSTAEvent.CSTA_NAMESPACE)
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "EstablishedEventType", namespace = CSTAEvent.CSTA_NAMESPACE, propOrder = {
-    "establishedConnection",
-    "answeringDevice",
-    "callingDevice",
+@XmlType(name = "DeliveredEventType", namespace = CSTAEvent.CSTA_NAMESPACE, propOrder = {
+    "connection",
+    "alertingDevice",
+    "callingDevice", 
     "calledDevice",
     "lastRedirectionDevice",
     "localConnectionInfo",
     "cause"
 })
-public class EstablishedEvent extends CSTAEvent {
+public class DeliveredEvent extends CSTAEvent {
     
     /**
-     * Established Connection
-     * From ECMA-269: "establishedConnection identifies the connection that has been established"
+     * Connection Information
+     * From ECMA-269: "connection identifies the connection that is alerting"
      */
-    @XmlElement(name = "establishedConnection", namespace = CSTA_NAMESPACE, required = true)
+    @XmlElement(name = "connection", namespace = CSTA_NAMESPACE, required = true)
     @NotNull
-    private ConnectionID establishedConnection;
+    private ConnectionID connection;
     
     /**
-     * Answering Device
-     * From ECMA-269: "answeringDevice identifies the device that answered the call"
+     * Alerting Device
+     * From ECMA-269: "alertingDevice identifies the device that is alerting"
      */
-    @XmlElement(name = "answeringDevice", namespace = CSTA_NAMESPACE, required = true)
+    @XmlElement(name = "alertingDevice", namespace = CSTA_NAMESPACE, required = true)
     @NotNull
-    private DeviceID answeringDevice;
+    private DeviceID alertingDevice;
     
     /**
      * Calling Device
@@ -90,7 +90,7 @@ public class EstablishedEvent extends CSTAEvent {
     /**
      * Default constructor for JAXB
      */
-    public EstablishedEvent() {
+    public DeliveredEvent() {
         super();
     }
     
@@ -98,13 +98,13 @@ public class EstablishedEvent extends CSTAEvent {
      * Constructor with required fields
      * 
      * @param monitorCrossRefID Monitor cross reference ID
-     * @param establishedConnection Connection that has been established
-     * @param answeringDevice Device that answered the call
+     * @param connection Connection information
+     * @param alertingDevice Device that is alerting
      */
-    public EstablishedEvent(String monitorCrossRefID, ConnectionID establishedConnection, DeviceID answeringDevice) {
+    public DeliveredEvent(String monitorCrossRefID, ConnectionID connection, DeviceID alertingDevice) {
         super(monitorCrossRefID);
-        this.establishedConnection = establishedConnection;
-        this.answeringDevice = answeringDevice;
+        this.connection = connection;
+        this.alertingDevice = alertingDevice;
     }
     
     /**
@@ -113,21 +113,21 @@ public class EstablishedEvent extends CSTAEvent {
      * @param monitorCrossRefID Monitor cross reference ID
      * @param eventTime Event time
      * @param eventSequenceNumber Event sequence number
-     * @param establishedConnection Connection that has been established
-     * @param answeringDevice Device that answered the call
+     * @param connection Connection information
+     * @param alertingDevice Device that is alerting
      * @param callingDevice Device that originated the call
      * @param calledDevice Device that was originally called
      * @param lastRedirectionDevice Device that last redirected the call
      * @param localConnectionInfo Local connection information
      * @param cause Cause of the event
      */
-    public EstablishedEvent(String monitorCrossRefID, Instant eventTime, Long eventSequenceNumber,
-                           ConnectionID establishedConnection, DeviceID answeringDevice, DeviceID callingDevice,
-                           DeviceID calledDevice, DeviceID lastRedirectionDevice,
-                           LocalConnectionState localConnectionInfo, CSTACause cause) {
+    public DeliveredEvent(String monitorCrossRefID, Instant eventTime, Long eventSequenceNumber,
+                         ConnectionID connection, DeviceID alertingDevice, DeviceID callingDevice,
+                         DeviceID calledDevice, DeviceID lastRedirectionDevice,
+                         LocalConnectionState localConnectionInfo, CSTACause cause) {
         super(monitorCrossRefID, eventTime, eventSequenceNumber);
-        this.establishedConnection = establishedConnection;
-        this.answeringDevice = answeringDevice;
+        this.connection = connection;
+        this.alertingDevice = alertingDevice;
         this.callingDevice = callingDevice;
         this.calledDevice = calledDevice;
         this.lastRedirectionDevice = lastRedirectionDevice;
@@ -137,7 +137,7 @@ public class EstablishedEvent extends CSTAEvent {
     
     @Override
     public String getCSTAEventType() {
-        return "EstablishedEvent";
+        return "DeliveredEvent";
     }
     
     @Override
@@ -147,19 +147,19 @@ public class EstablishedEvent extends CSTAEvent {
     
     @Override
     public int getEventPriority() {
-        return 1; // Highest priority - call is connected
+        return 2; // High priority - call is alerting
     }
     
     @Override
     public boolean isValid() {
-        return super.isValid() && establishedConnection != null && answeringDevice != null;
+        return super.isValid() && connection != null && alertingDevice != null;
     }
     
     @Override
     public String toXML() {
         StringBuilder xml = new StringBuilder();
         xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        xml.append("<EstablishedEvent xmlns=\"").append(CSTA_NAMESPACE).append("\">");
+        xml.append("<DeliveredEvent xmlns=\"").append(CSTA_NAMESPACE).append("\">");
         
         // Common CSTA event fields
         xml.append("<monitorCrossRefID>").append(getMonitorCrossRefID()).append("</monitorCrossRefID>");
@@ -170,16 +170,16 @@ public class EstablishedEvent extends CSTAEvent {
             xml.append("<eventSequenceNumber>").append(getEventSequenceNumber()).append("</eventSequenceNumber>");
         }
         
-        // EstablishedEvent specific fields
-        if (establishedConnection != null) {
-            xml.append("<establishedConnection>");
-            xml.append("<callID>").append(establishedConnection.getCallID()).append("</callID>");
-            xml.append("<deviceID>").append(establishedConnection.getDeviceID()).append("</deviceID>");
-            xml.append("</establishedConnection>");
+        // DeliveredEvent specific fields
+        if (connection != null) {
+            xml.append("<connection>");
+            xml.append("<callID>").append(connection.getCallID()).append("</callID>");
+            xml.append("<deviceID>").append(connection.getDeviceID()).append("</deviceID>");
+            xml.append("</connection>");
         }
         
-        if (answeringDevice != null) {
-            xml.append("<answeringDevice>").append(answeringDevice.getValue()).append("</answeringDevice>");
+        if (alertingDevice != null) {
+            xml.append("<alertingDevice>").append(alertingDevice.getValue()).append("</alertingDevice>");
         }
         
         if (callingDevice != null) {
@@ -202,26 +202,26 @@ public class EstablishedEvent extends CSTAEvent {
             xml.append("<cause>").append(cause.name()).append("</cause>");
         }
         
-        xml.append("</EstablishedEvent>");
+        xml.append("</DeliveredEvent>");
         return xml.toString();
     }
     
     // Getters and Setters
     
-    public ConnectionID getEstablishedConnection() {
-        return establishedConnection;
+    public ConnectionID getConnection() {
+        return connection;
     }
     
-    public void setEstablishedConnection(ConnectionID establishedConnection) {
-        this.establishedConnection = establishedConnection;
+    public void setConnection(ConnectionID connection) {
+        this.connection = connection;
     }
     
-    public DeviceID getAnsweringDevice() {
-        return answeringDevice;
+    public DeviceID getAlertingDevice() {
+        return alertingDevice;
     }
     
-    public void setAnsweringDevice(DeviceID answeringDevice) {
-        this.answeringDevice = answeringDevice;
+    public void setAlertingDevice(DeviceID alertingDevice) {
+        this.alertingDevice = alertingDevice;
     }
     
     public DeviceID getCallingDevice() {
@@ -269,9 +269,9 @@ public class EstablishedEvent extends CSTAEvent {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        EstablishedEvent that = (EstablishedEvent) o;
-        return Objects.equals(establishedConnection, that.establishedConnection) &&
-               Objects.equals(answeringDevice, that.answeringDevice) &&
+        DeliveredEvent that = (DeliveredEvent) o;
+        return Objects.equals(connection, that.connection) &&
+               Objects.equals(alertingDevice, that.alertingDevice) &&
                Objects.equals(callingDevice, that.callingDevice) &&
                Objects.equals(calledDevice, that.calledDevice) &&
                Objects.equals(lastRedirectionDevice, that.lastRedirectionDevice) &&
@@ -281,15 +281,15 @@ public class EstablishedEvent extends CSTAEvent {
     
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), establishedConnection, answeringDevice, callingDevice,
+        return Objects.hash(super.hashCode(), connection, alertingDevice, callingDevice, 
                           calledDevice, lastRedirectionDevice, localConnectionInfo, cause);
     }
     
     @Override
     public String toString() {
-        return String.format("EstablishedEvent{establishedConnection=%s, answeringDevice=%s, callingDevice=%s, " +
+        return String.format("DeliveredEvent{connection=%s, alertingDevice=%s, callingDevice=%s, " +
                            "calledDevice=%s, lastRedirectionDevice=%s, localConnectionInfo=%s, cause=%s}",
-                           establishedConnection, answeringDevice, callingDevice, calledDevice,
+                           connection, alertingDevice, callingDevice, calledDevice, 
                            lastRedirectionDevice, localConnectionInfo, cause);
     }
 }

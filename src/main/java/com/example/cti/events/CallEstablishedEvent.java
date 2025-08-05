@@ -1,4 +1,4 @@
-package com.example.lambdaclient.cti.events;
+package com.example.cti.events;
 
 /**
  * Call Established Event

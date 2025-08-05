@@ -1,6 +1,6 @@
-package com.example.lambdaclient.cti.dmcc;
+package com.example.cti.dmcc;
 
-import com.example.lambdaclient.cti.CTIMonitorConfig.DMCCConfig;
+import com.example.cti.CTIMonitorConfig.DMCCConfig;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.logging.Logger;

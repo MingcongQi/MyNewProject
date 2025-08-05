@@ -1,8 +1,8 @@
-package com.example.lambdaclient.cti;
+package com.example.cti;
 
-import com.example.lambdaclient.cti.events.*;
-import com.example.lambdaclient.cti.dmcc.DMCCConnection;
-import com.example.lambdaclient.cti.connect.ConnectEventPublisher;
+import com.example.cti.events.*;
+import com.example.cti.dmcc.DMCCConnection;
+import com.example.cti.connect.ConnectEventPublisher;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;

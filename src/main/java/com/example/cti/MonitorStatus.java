@@ -1,4 +1,4 @@
-package com.example.lambdaclient.cti;
+package com.example.cti;
 
 /**
  * Monitor Status

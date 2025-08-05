@@ -1,4 +1,4 @@
-package com.example.lambdaclient.cti.connect;
+package com.example.cti.connect;
 
 import java.util.Map;
 

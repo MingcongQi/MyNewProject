@@ -1,220 +1,243 @@
-# AWS Lambda HTTP Client - Pure Java Application
+# CTI Event Monitor - ECMA-269 CSTA Phase III Compliant
 
-A lightweight, pure Java application that sends HTTP requests to AWS Lambda functions via Function URLs. **No ports opened** - this is a true client application that doesn't act as a web server.
+## 🎯 Overview
 
-## Features
+A professional-grade **CTI (Computer Telephony Integration) Event Monitor** that implements the **ECMA-269 CSTA Phase III** international standard for monitoring and processing telecommunications events from Avaya Aura Contact Center systems.
 
-- Pure Java 21 application (no Spring Boot)
-- No web server - doesn't open any ports
-- Interactive console interface
-- Command-line interface support
-- Configurable Lambda function URL
-- JSON request/response handling
-- Health check functionality
-- Windows executable generation
-- Cross-platform compatibility
-
-## Prerequisites
-
-- Java 21 or higher
-- Gradle 8.0+
-- AWS Lambda function with Function URL enabled
-- (Optional) AWS credentials for enhanced security
-
-## Project Structure
+## 🏗️ Architecture
 
 ```
-lambda-client-app/
-├── build.gradle
-├── src/
-│   ├── main/
-│   │   ├── java/com/example/lambdaclient/
-│   │   │   ├── LambdaClientApplication.java
-│   │   │   ├── config/
-│   │   │   │   └── LambdaConfig.java
-│   │   │   ├── controller/
-│   │   │   │   └── LambdaController.java
-│   │   │   └── service/
-│   │   │       └── LambdaService.java
-│   │   └── resources/
-│   │       └── application.yml
-│   └── test/
-└── README.md
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   Avaya DMCC    │───▶│  CTI Event       │───▶│  External       │
+│   API Events    │    │  Monitor         │    │  Systems        │
+│                 │    │  (ECMA-269)      │    │  (Connect/etc.) │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
 ```
 
-## Configuration
+## ✨ Key Features
 
-### Environment Variables
+### **🔧 ECMA-269 CSTA Phase III Compliance**
+- Full implementation of ECMA-269 international standard
+- Proper XML namespace and schema validation
+- Standard CSTA data types and event structures
+- Official Avaya DMCC SDK compatibility
 
-Set the following environment variables or update `application.yml`:
+### **📞 Comprehensive Event Support**
+- **DeliveredEvent** (Section 17.2.5) - Call ringing/alerting
+- **EstablishedEvent** (Section 17.2.8) - Call connected/answered
+- **CallClearedEvent** (Section 17.2.2) - Call ended/cleared
+- **ConnectionClearedEvent** (Section 17.2.3) - Connection dropped
+- **Additional Events**: Diverted, Transferred, Conferenced, Queued
 
+### **🚀 Production-Ready Features**
+- Asynchronous event processing with configurable thread pools
+- Automatic reconnection and error recovery
+- Comprehensive logging and monitoring
+- Health checks and status reporting
+- Graceful shutdown handling
+
+### **🔗 Integration Capabilities**
+- Avaya DMCC API integration
+- Amazon Connect event publishing
+- RESTful status and monitoring endpoints
+- Configurable event routing and filtering
+
+## 📋 Requirements
+
+- **Java 21+**
+- **Avaya Communication Manager** with DMCC enabled
+- **Network access** to Avaya DMCC server (typically port 4721)
+- **Optional**: AWS credentials for Connect integration
+
+## 🚀 Quick Start
+
+### **1. Clone and Build**
 ```bash
-export LAMBDA_FUNCTION_URL=https://your-lambda-function-url.lambda-url.us-east-1.on.aws/
-export AWS_REGION=us-east-1
-export LAMBDA_TIMEOUT=30
-```
-
-### Application Properties
-
-Update `src/main/resources/application.yml`:
-
-```yaml
-aws:
-  lambda:
-    function-url: https://your-actual-lambda-function-url.lambda-url.us-east-1.on.aws/
-    region: us-east-1
-    timeout-seconds: 30
-```
-
-## Installation & Running
-
-### 1. Clone the repository
-```bash
-git clone <your-repo-url>
-cd lambda-client-app
-```
-
-### 2. Build the application
-```bash
+git clone https://github.com/MingcongQi/MyNewProject.git
+cd MyNewProject
 ./gradlew build
 ```
 
-### 3. Run the application
+### **2. Configure Environment**
 ```bash
-./gradlew bootRun
+export DMCC_HOST=your-avaya-server.com
+export DMCC_PORT=4721
+export DMCC_USERNAME=your-username
+export DMCC_PASSWORD=your-password
+export DMCC_SECURE=true
 ```
 
-Or run the JAR file:
+### **3. Run the Application**
 ```bash
-java -jar build/libs/lambda-client-app-0.0.1-SNAPSHOT.jar
+./gradlew run
 ```
 
-## API Endpoints
-
-### Health Check
+Or run the JAR directly:
 ```bash
-GET http://localhost:8080/api/lambda/health
+java -jar build/libs/cti-event-monitor-3.0.0.jar
 ```
 
-### Invoke Lambda with JSON payload
+## ⚙️ Configuration
+
+### **Environment Variables**
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `DMCC_HOST` | Avaya DMCC server hostname | `localhost` |
+| `DMCC_PORT` | DMCC server port | `4721` |
+| `DMCC_USERNAME` | DMCC username | `admin` |
+| `DMCC_PASSWORD` | DMCC password | `password` |
+| `DMCC_SECURE` | Use secure connection | `true` |
+| `EVENT_PROCESSING_THREADS` | Number of processing threads | `4` |
+| `MAX_QUEUE_SIZE` | Maximum event queue size | `1000` |
+| `HEARTBEAT_INTERVAL` | Heartbeat interval (seconds) | `30` |
+
+### **Connect Integration (Optional)**
 ```bash
-POST http://localhost:8080/api/lambda/invoke
-Content-Type: application/json
-
-{
-  "message": "Hello from Spring Boot!",
-  "data": {
-    "key": "value"
-  }
-}
+export CONNECT_INSTANCE_ID=your-connect-instance
+export CONNECT_REGION=us-east-1
+export AWS_ACCESS_KEY_ID=your-access-key
+export AWS_SECRET_ACCESS_KEY=your-secret-key
 ```
 
-### Invoke Lambda with string payload
-```bash
-POST http://localhost:8080/api/lambda/invoke-string
-Content-Type: application/json
+## 📊 Monitoring
 
-"Hello Lambda!"
+### **Application Status**
+The application provides comprehensive status information:
+
+```
+📊 CTI Event Monitor Status:
+  🔗 DMCC Connection: ✅ Connected
+  📞 Active Calls: 15
+  📤 Events Sent: 1,247
+  💓 Last Heartbeat: 2024-08-05T23:00:00Z
+
+🎯 Supported CSTA Events:
+  📞 DeliveredEvent (ECMA-269 Section 17.2.5)
+  ✅ EstablishedEvent (ECMA-269 Section 17.2.8)
+  📴 CallClearedEvent (ECMA-269 Section 17.2.2)
+  🔌 ConnectionClearedEvent (ECMA-269 Section 17.2.3)
 ```
 
-### Invoke Lambda with GET request
-```bash
-GET http://localhost:8080/api/lambda/invoke
-```
+### **Health Checks**
+- DMCC connection status
+- Event processing queue health
+- Memory and thread pool monitoring
+- Automatic reconnection attempts
 
-## Example Lambda Function
+## 🧪 Testing
 
-Here's a simple Python Lambda function that works with this client:
-
-```python
-import json
-
-def lambda_handler(event, context):
-    print(f"Received event: {json.dumps(event)}")
-    
-    return {
-        'statusCode': 200,
-        'headers': {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-        },
-        'body': json.dumps({
-            'message': 'Hello from Lambda!',
-            'received_data': event,
-            'timestamp': context.aws_request_id
-        })
-    }
-```
-
-## Testing
-
-Run tests with:
+### **Run Tests**
 ```bash
 ./gradlew test
 ```
 
-## Building for Production
-
-Create a production JAR:
+### **CSTA Compliance Testing**
 ```bash
-./gradlew bootJar
+./gradlew test --tests "*CSTAComplianceTest"
 ```
 
-## Windows Deployment
-
-### Option 1: Download Pre-built Executable
-
-1. Go to the [Releases page](https://github.com/MingcongQi/MyNewProject/releases)
-2. Download the latest `LambdaClient.exe` or `LambdaClient.msi` installer
-3. Run the executable directly (no Java installation required)
-
-### Option 2: Build Windows Executable Locally
-
-Requirements: JDK 21 installed
-
-```cmd
-# Build the executable
-gradlew createWindowsExe
-
-# The executable will be created in build/jpackage/output/
-```
-
-### Option 3: Running as Windows Service
-
-1. Build the JAR file
-2. Use a tool like NSSM (Non-Sucking Service Manager) to create a Windows service:
-
-```cmd
-nssm install LambdaClientApp
-nssm set LambdaClientApp Application "C:\Program Files\Java\jdk-21\bin\java.exe"
-nssm set LambdaClientApp AppParameters "-jar C:\path\to\lambda-client-app-0.0.1-SNAPSHOT.jar"
-nssm set LambdaClientApp AppDirectory "C:\path\to\app"
-nssm start LambdaClientApp
-```
-
-### GitHub Actions Automatic Builds
-
-This repository is configured with GitHub Actions to automatically build Windows executables:
-
-- **On every push to main**: Creates executable artifacts
-- **On tagged releases**: Creates GitHub releases with downloadable executables
-- **Manual trigger**: Can be triggered manually from the Actions tab
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Connection timeout**: Increase the timeout value in `application.yml`
-2. **Lambda function not found**: Verify the Function URL is correct
-3. **CORS issues**: Ensure your Lambda function returns proper CORS headers
-
-### Logs
-
-Check application logs for detailed error information:
+### **Integration Testing**
 ```bash
-tail -f logs/spring.log
+./gradlew test --tests "*IntegrationTest"
 ```
 
-## License
+## 📚 Documentation
 
-MIT License
+### **ECMA-269 CSTA Compliance**
+See [ECMA_269_CSTA_COMPLIANCE.md](ECMA_269_CSTA_COMPLIANCE.md) for detailed compliance information.
+
+### **API Documentation**
+- [Event Discovery README](EVENT_DISCOVERY_README.md)
+- [CTI Event Monitor README](CTI_EVENT_MONITOR_README.md)
+- [Deployment Guide](DEPLOYMENT_GUIDE.md)
+
+### **Standards References**
+- [ECMA-269 Standard](https://www.ecma-international.org/computer-supported-telecommunications-applications-csta/)
+- [Avaya DMCC Documentation](https://support.avaya.com/elmodocs2/cmapi/docs/api/ch/ecma/csta/callcontrol/CallControlListener.html)
+
+## 🏭 Production Deployment
+
+### **Docker Deployment**
+```dockerfile
+FROM openjdk:21-jre-slim
+COPY build/libs/cti-event-monitor-3.0.0.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "/app.jar"]
+```
+
+### **Windows Service**
+```bash
+./gradlew createWindowsExe
+# Install the generated .exe as a Windows service
+```
+
+### **Systemd Service (Linux)**
+```ini
+[Unit]
+Description=CTI Event Monitor
+After=network.target
+
+[Service]
+Type=simple
+User=cti
+ExecStart=/usr/local/bin/java -jar /opt/cti/cti-event-monitor-3.0.0.jar
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+## 🔧 Development
+
+### **Project Structure**
+```
+src/main/java/com/example/cti/
+├── events/                 # ECMA-269 CSTA event classes
+│   ├── CSTAEvent.java     # Base CSTA event
+│   ├── DeliveredEvent.java
+│   ├── EstablishedEvent.java
+│   └── CallClearedEvent.java
+├── dmcc/                  # DMCC integration
+│   ├── DMCCConnection.java
+│   ├── CSTACallControlListener.java
+│   └── EventDiscovery.java
+├── connect/               # External system integration
+└── CTIEventMonitorApplication.java
+```
+
+### **Adding New Event Types**
+1. Create event class extending `CSTAEvent`
+2. Implement required ECMA-269 methods
+3. Add to `CSTACallControlListener`
+4. Update documentation
+
+### **Contributing**
+1. Fork the repository
+2. Create a feature branch
+3. Implement changes with tests
+4. Ensure ECMA-269 compliance
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🤝 Support
+
+- **Issues**: [GitHub Issues](https://github.com/MingcongQi/MyNewProject/issues)
+- **Documentation**: [Project Wiki](https://github.com/MingcongQi/MyNewProject/wiki)
+- **ECMA-269 Standard**: [Official Documentation](https://www.ecma-international.org/computer-supported-telecommunications-applications-csta/)
+
+## 🎯 Roadmap
+
+- [ ] **Enhanced Event Types**: Additional CSTA events
+- [ ] **Real-time Dashboard**: Web-based monitoring interface
+- [ ] **Event Analytics**: Historical event analysis
+- [ ] **Multi-tenant Support**: Support for multiple Avaya systems
+- [ ] **Cloud Integration**: Enhanced cloud service integrations
+
+---
+
+**Built with ❤️ for the CTI community | ECMA-269 CSTA Phase III Compliant**

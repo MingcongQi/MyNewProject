@@ -1,4 +1,4 @@
-package com.example.lambdaclient.cti.dmcc;
+package com.example.cti.dmcc;
 
 /**
  * DMCC Event Data container

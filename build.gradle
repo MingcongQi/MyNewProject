@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.example'
-version = '2.0.0'
+version = '3.0.0'
 
 java {
     sourceCompatibility = '21'
@@ -14,9 +14,9 @@ repositories {
     mavenCentral()
 }
 
-// Set the main class for the application
+// Set the main class for the CTI application
 application {
-    mainClass = 'com.example.lambdaclient.CTIEventMonitorApplication'
+    mainClass = 'com.example.cti.CTIEventMonitorApplication'
 }
 
 dependencies {
@@ -72,7 +72,7 @@ tasks.named('test') {
 
 // Task to prepare application for jpackage
 task prepareApp(type: Copy) {
-    dependsOn jar  // Changed from bootJar to jar
+    dependsOn jar
     
     doFirst {
         mkdir 'build/jpackage/input'
@@ -85,7 +85,7 @@ task prepareApp(type: Copy) {
     // Rename the jar to a consistent name for jpackage
     rename { filename ->
         if (filename.endsWith('.jar')) {
-            return 'lambda-client-v2.jar'
+            return 'cti-event-monitor.jar'
         }
         return filename
     }
@@ -102,33 +102,33 @@ task createWindowsExe(type: Exec) {
     commandLine 'jpackage',
         '--input', 'build/jpackage/input',
         '--dest', 'build/jpackage/output',
-        '--name', 'LambdaClientV2',
-        '--main-jar', 'lambda-client-v2.jar',
+        '--name', 'CTIEventMonitor',
+        '--main-jar', 'cti-event-monitor.jar',
         '--type', 'exe',
         '--win-console',
-        '--app-version', '2.0.0',
-        '--description', 'Pure Java Lambda HTTP Client v2.0 - No Ports',
-        '--vendor', 'Lambda Client Team',
+        '--app-version', '3.0.0',
+        '--description', 'ECMA-269 CSTA Phase III Compliant CTI Event Monitor',
+        '--vendor', 'CTI Development Team',
         '--copyright', 'Copyright 2024'
 }
 
 // Create a fat JAR with all dependencies
 jar {
-    archiveBaseName = 'lambda-client-pure-java'
-    archiveVersion = '2.0.0'
+    archiveBaseName = 'cti-event-monitor'
+    archiveVersion = '3.0.0'
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     
     manifest {
         attributes(
-            'Main-Class': 'com.example.lambdaclient.SimpleLambdaClient',
-            'Implementation-Title': 'Lambda HTTP Client - Pure Java',
-            'Implementation-Version': '2.0.0',
-            'Implementation-Vendor': 'Lambda Client Team',
-            'Specification-Title': 'Pure Java Lambda Client',
-            'Specification-Version': '2.0',
+            'Main-Class': 'com.example.cti.CTIEventMonitorApplication',
+            'Implementation-Title': 'CTI Event Monitor - ECMA-269 CSTA Phase III Compliant',
+            'Implementation-Version': '3.0.0',
+            'Implementation-Vendor': 'CTI Development Team',
+            'Specification-Title': 'ECMA-269 CSTA Phase III CTI Event Monitor',
+            'Specification-Version': '3.0',
             'Built-By': System.getProperty('user.name'),
             'Built-Date': new Date().toString(),
-            'Application-Name': 'Lambda HTTP Client v2.0'
+            'Application-Name': 'CTI Event Monitor v3.0'
         )
     }
     

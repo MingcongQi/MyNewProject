@@ -1,4 +1,4 @@
-package com.example.lambdaclient.cti;
+package com.example.cti;
 
 /**
  * Configuration class for CTI Event Monitor

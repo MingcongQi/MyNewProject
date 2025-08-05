@@ -1,6 +1,6 @@
-package com.example.lambdaclient.cti.connect;
+package com.example.cti.connect;
 
-import com.example.lambdaclient.cti.CTIMonitorConfig.ConnectConfig;
+import com.example.cti.CTIMonitorConfig.ConnectConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URI;
 import java.net.http.HttpClient;

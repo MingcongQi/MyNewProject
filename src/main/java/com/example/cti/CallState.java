@@ -1,4 +1,4 @@
-package com.example.lambdaclient.cti;
+package com.example.cti;
 
 import java.util.ArrayList;
 import java.util.List;

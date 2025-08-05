@@ -1,6 +1,6 @@
-package com.example.lambdaclient.cti.dmcc;
+package com.example.cti.dmcc;
 
-import com.example.lambdaclient.cti.events.*;
+import com.example.cti.events.*;
 import java.util.logging.Logger;
 import java.time.Instant;
 
