@@ -27,24 +27,43 @@ dependencies {
     // HTTP Client (Java 11+ built-in, but explicit for clarity)
     // implementation 'java.net.http' // Built into JDK 11+
     
-    // XML processing for DMCC API
+    // XML processing for DMCC API and ECMA-269 CSTA
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
     implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.8'
+    implementation 'javax.xml.soap:javax.xml.soap-api:1.4.0'
+    implementation 'com.sun.xml.messaging.saaj:saaj-impl:1.5.3'
     
-    // Logging
-    implementation 'java.util.logging:java.util.logging' // Built into JDK
+    // ECMA-269 CSTA Phase III Standard Support
+    // Note: In production, you would include the actual Avaya DMCC SDK JAR
+    // implementation files('lib/dmcc-sdk.jar') // Avaya DMCC SDK
+    // implementation files('lib/csta-binding.jar') // ECMA CSTA Binding Classes
     
-    // SSL/TLS support
+    // XML Schema validation for CSTA compliance
+    implementation 'org.apache.xmlbeans:xmlbeans:5.1.1'
+    
+    // Enhanced logging with structured output
+    implementation 'ch.qos.logback:logback-classic:1.4.14'
+    implementation 'org.slf4j:slf4j-api:2.0.9'
+    
+    // SSL/TLS support for secure DMCC connections
     // implementation 'javax.net.ssl' // Built into JDK
     
-    // Concurrent utilities
+    // Concurrent utilities for CSTA event processing
     // implementation 'java.util.concurrent' // Built into JDK
+    
+    // Validation for CSTA message compliance
+    implementation 'javax.validation:validation-api:2.0.1.Final'
+    implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
     
     // Testing
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testImplementation 'org.mockito:mockito-core:5.8.0'
     testImplementation 'org.mockito:mockito-junit-jupiter:5.8.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    
+    // CSTA Testing utilities
+    testImplementation 'org.xmlunit:xmlunit-core:2.9.1'
+    testImplementation 'org.xmlunit:xmlunit-matchers:2.9.1'
 }
 
 tasks.named('test') {
