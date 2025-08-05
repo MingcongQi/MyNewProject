@@ -325,24 +325,22 @@ public class DMCCConnection {
         });
     }
     
+    // Add event discovery
+    private final EventDiscovery eventDiscovery = new EventDiscovery();
+    
     /**
-     * Extract event type from XML
+     * Extract event type from XML using discovery
      */
     private String extractEventType(String eventXml) {
-        // Simple XML parsing to extract event type
-        // In a production system, you would use a proper XML parser
+        // Use event discovery to find actual event types
+        String eventType = eventDiscovery.discoverEventType(eventXml);
         
-        if (eventXml.contains("CallClearedEvent")) return "CallCleared";
-        if (eventXml.contains("CallEstablishedEvent")) return "CallEstablished";
-        if (eventXml.contains("CallTransferredEvent")) return "CallTransferred";
-        if (eventXml.contains("CallConferencedEvent")) return "CallConferenced";
-        if (eventXml.contains("CallHeldEvent")) return "CallHeld";
-        if (eventXml.contains("CallRetrievedEvent")) return "CallRetrieved";
-        if (eventXml.contains("CallDeliveredEvent")) return "CallDelivered";
-        if (eventXml.contains("CallAnsweredEvent")) return "CallAnswered";
-        if (eventXml.contains("AgentStateEvent")) return "AgentStateChanged";
+        // Log discovery progress every 50 events
+        if (eventDiscovery.getDiscoveredEvents().size() % 50 == 0) {
+            eventDiscovery.printDiscoveredEvents();
+        }
         
-        return null;
+        return eventType;
     }
     
     /**

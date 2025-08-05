@@ -107,20 +107,97 @@ public class AvayaCTIEventMonitor {
     
     /**
      * Start event listeners for different CTI event types
+     * Uses dynamic discovery instead of hardcoded event names
      */
     private void startEventListeners() {
-        // Register event handlers for different DMCC event types
-        dmccConnection.registerEventHandler("CallEstablished", this::handleCallEstablished);
-        dmccConnection.registerEventHandler("CallCleared", this::handleCallCleared);
-        dmccConnection.registerEventHandler("CallTransferred", this::handleCallTransferred);
-        dmccConnection.registerEventHandler("CallConferenced", this::handleCallConferenced);
-        dmccConnection.registerEventHandler("CallHeld", this::handleCallHeld);
-        dmccConnection.registerEventHandler("CallRetrieved", this::handleCallRetrieved);
-        dmccConnection.registerEventHandler("AgentStateChanged", this::handleAgentStateChanged);
-        dmccConnection.registerEventHandler("CallDelivered", this::handleCallDelivered);
-        dmccConnection.registerEventHandler("CallAnswered", this::handleCallAnswered);
+        // Register a generic event handler that discovers event types dynamically
+        dmccConnection.registerEventHandler("*", this::handleGenericEvent);
         
-        logger.info("Event listeners registered successfully");
+        logger.info("Generic event listener registered - will discover actual event types from your Avaya system");
+    }
+    
+    /**
+     * Handle any event type dynamically
+     */
+    private void handleGenericEvent(Object eventData) {
+        eventProcessingExecutor.submit(() -> {
+            try {
+                // Extract event type from the actual data
+                String eventType = extractEventTypeFromData(eventData);
+                
+                if (eventType != null) {
+                    // Route to appropriate handler based on discovered event type
+                    routeEventByType(eventType, eventData);
+                } else {
+                    logger.warning("Could not determine event type from: " + eventData);
+                }
+                
+            } catch (Exception e) {
+                logger.log(Level.SEVERE, "Error processing generic event", e);
+            }
+        });
+    }
+    
+    /**
+     * Route events to appropriate handlers based on discovered type
+     */
+    private void routeEventByType(String eventType, Object eventData) {
+        // Convert to lowercase for comparison
+        String lowerEventType = eventType.toLowerCase();
+        
+        try {
+            if (lowerEventType.contains("established") || lowerEventType.contains("originated")) {
+                handleCallEstablished(eventData);
+            } else if (lowerEventType.contains("cleared") || lowerEventType.contains("disconnected")) {
+                handleCallCleared(eventData);
+            } else if (lowerEventType.contains("transferred")) {
+                handleCallTransferred(eventData);
+            } else if (lowerEventType.contains("conferenced") || lowerEventType.contains("conference")) {
+                handleCallConferenced(eventData);
+            } else if (lowerEventType.contains("held") || lowerEventType.contains("hold")) {
+                handleCallHeld(eventData);
+            } else if (lowerEventType.contains("retrieved") || lowerEventType.contains("unhold")) {
+                handleCallRetrieved(eventData);
+            } else if (lowerEventType.contains("delivered") || lowerEventType.contains("alerting")) {
+                handleCallDelivered(eventData);
+            } else if (lowerEventType.contains("answered") || lowerEventType.contains("connected")) {
+                handleCallAnswered(eventData);
+            } else if (lowerEventType.contains("agent") || lowerEventType.contains("state")) {
+                handleAgentStateChanged(eventData);
+            } else {
+                // Log unknown event for future implementation
+                logger.info("📝 UNHANDLED EVENT TYPE: " + eventType + " - Consider adding handler");
+                logger.fine("Event data: " + eventData);
+            }
+        } catch (Exception e) {
+            logger.log(Level.WARNING, "Error routing event type: " + eventType, e);
+        }
+    }
+    
+    /**
+     * Extract event type from event data
+     */
+    private String extractEventTypeFromData(Object eventData) {
+        if (eventData instanceof DMCCEventData) {
+            return ((DMCCEventData) eventData).getEventType();
+        } else if (eventData instanceof String) {
+            // Try to parse XML string
+            return parseEventTypeFromXml((String) eventData);
+        }
+        return null;
+    }
+    
+    /**
+     * Parse event type from XML string
+     */
+    private String parseEventTypeFromXml(String xml) {
+        // Simple regex to find event type in XML
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("<([A-Za-z]+Event)\\s");
+        java.util.regex.Matcher matcher = pattern.matcher(xml);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
     }
     
     /**
