@@ -4,52 +4,62 @@ import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
 /**
- * CTI Event Monitor Demo
+ * CTI Event Monitor Demo with DMCC CallControlListener Integration
  * 
- * This class demonstrates the complete CTI Event Monitor system that integrates
- * Avaya DMCC events with Amazon Connect. It shows the full flow from the
- * sequence diagram:
+ * This enhanced demo shows the complete integration including:
+ * 1. DMCC Session Management with CallControlListener
+ * 2. Call Control events that indicate third-party call state changes
+ * 3. Event processing through the CTI Event Monitor
+ * 4. Publishing to Amazon Connect
  * 
- * 1. Avaya system generates DMCC events
- * 2. CTI Event Monitor processes and classifies events
- * 3. Relevant events are published to Amazon Connect
- * 4. Connect creates/updates contact records
+ * Based on ch.ecma.csta.callcontrol.CallControlListener pattern
  */
 public class CTIEventMonitorDemo {
     
     private static final Logger logger = Logger.getLogger(CTIEventMonitorDemo.class.getName());
     
     public static void main(String[] args) {
-        logger.info("🚀 Starting CTI Event Monitor Demo");
+        logger.info("🚀 Starting Enhanced CTI Event Monitor Demo");
+        logger.info("   📡 Includes DMCC CallControlListener Integration");
         
-        // Initialize the system
+        // Initialize the complete system
         CTIEventMonitor monitor = createCTIEventMonitor();
+        DMCCSessionManager dmccSession = createDMCCSession(monitor);
         
         try {
-            // Demonstrate the complete call flow from the sequence diagram
-            demonstrateCallFlow(monitor);
+            // Step 1: Connect to DMCC and register CallControlListener
+            demonstrateDMCCConnection(dmccSession);
             
-            // Show batch processing capabilities
+            // Step 2: Show CallControlListener receiving events
+            demonstrateCallControlEvents(dmccSession);
+            
+            // Step 3: Demonstrate manual event processing
+            demonstrateManualEventProcessing(monitor);
+            
+            // Step 4: Show batch processing capabilities
             demonstrateBatchProcessing(monitor);
             
-            // Display final statistics
-            Thread.sleep(2000); // Allow async operations to complete
-            monitor.printStatusReport();
+            // Step 5: Display comprehensive statistics
+            Thread.sleep(3000); // Allow async operations to complete
+            displayFinalStatistics(monitor, dmccSession);
             
         } catch (Exception e) {
             logger.severe("Demo error: " + e.getMessage());
         } finally {
             // Clean shutdown
-            monitor.shutdown();
+            cleanupResources(monitor, dmccSession);
         }
         
-        logger.info("✅ CTI Event Monitor Demo completed");
+        logger.info("✅ Enhanced CTI Event Monitor Demo completed");
     }
     
     /**
      * Create and configure the CTI Event Monitor
      */
     private static CTIEventMonitor createCTIEventMonitor() {
+        logger.info("\n🏗️ INITIALIZING CTI EVENT MONITOR");
+        logger.info("==================================");
+        
         // Configure the monitor
         CTIEventMonitor.CTIMonitorConfig config = new CTIEventMonitor.CTIMonitorConfig()
             .setConnectIntegrationEnabled(true)
@@ -61,49 +71,109 @@ public class CTIEventMonitorDemo {
         ConnectEventPublisher.ConnectApiClient connectClient = 
             ConnectApiClientImpl.createTestClient("connect-instance-demo");
         
-        return new CTIEventMonitor(config, connectClient);
+        CTIEventMonitor monitor = new CTIEventMonitor(config, connectClient);
+        
+        logger.info("✅ CTI Event Monitor initialized");
+        return monitor;
     }
     
     /**
-     * Demonstrate the complete call flow from the sequence diagram
+     * Create DMCC Session Manager with CallControlListener
      */
-    private static void demonstrateCallFlow(CTIEventMonitor monitor) {
-        logger.info("\n📞 DEMONSTRATING COMPLETE CALL FLOW");
-        logger.info("===================================");
+    private static DMCCSessionManager createDMCCSession(CTIEventMonitor monitor) {
+        logger.info("\n📡 INITIALIZING DMCC SESSION MANAGER");
+        logger.info("====================================");
         
-        String callId = "call-12345-demo";
+        // Create DMCC session manager
+        DMCCSessionManager dmccSession = DMCCSessionManager.create(
+            monitor,
+            "avaya-aes-server.company.com", // Replace with actual server
+            "dmcc-user",                    // Replace with actual username
+            "dmcc-password"                 // Replace with actual password
+        );
         
-        // Sample DMCC events representing a typical call flow
-        String[] callFlowEvents = {
-            // 1. Call arrives and starts ringing
-            createEventRingingXml(callId, "1234567890", "5551234"),
+        logger.info("✅ DMCC Session Manager created");
+        return dmccSession;
+    }
+    
+    /**
+     * Demonstrate DMCC connection and CallControlListener registration
+     */
+    private static void demonstrateDMCCConnection(DMCCSessionManager dmccSession) {
+        logger.info("\n🔌 DEMONSTRATING DMCC CONNECTION");
+        logger.info("================================");
+        
+        try {
+            // Connect to DMCC server and register CallControlListener
+            boolean connected = dmccSession.connect();
             
-            // 2. Call gets queued
-            createEventQueuedXml(callId, "queue-support"),
+            if (connected) {
+                logger.info("✅ DMCC Connection Status: CONNECTED");
+                logger.info("   📋 CallControlListener registered for events:");
+                logger.info("      • callDelivered (call ringing)");
+                logger.info("      • callEstablished (call answered)");
+                logger.info("      • callCleared (call ended)");
+                logger.info("      • callDiverted (call transferred/forwarded)");
+                logger.info("      • callTransferred (call transferred)");
+                logger.info("      • callConferenced (call conferenced)");
+                logger.info("      • callQueued (call queued)");
+                logger.info("      • connectionCleared (connection ended)");
+                logger.info("      • serviceInitiated (service started)");
+            } else {
+                logger.warning("❌ DMCC Connection Status: FAILED");
+            }
             
-            // 3. SIP INVITE for media
-            createSipInviteXml(callId),
+        } catch (Exception e) {
+            logger.severe("DMCC connection error: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Demonstrate CallControlListener receiving call state change events
+     */
+    private static void demonstrateCallControlEvents(DMCCSessionManager dmccSession) {
+        logger.info("\n📞 DEMONSTRATING CALL CONTROL EVENTS");
+        logger.info("====================================");
+        logger.info("Simulating call state changes that would be received");
+        logger.info("from the DMCC CallControlListener...");
+        
+        try {
+            // This simulates what would happen when actual DMCC events are received
+            dmccSession.simulateCallControlEvents();
             
-            // 4. Call diverted to agent
-            createEventDivertedXml(callId, "agent-001"),
+            // Allow time for event processing
+            Thread.sleep(2000);
             
-            // 5. Party information changes (maybe transfer)
-            createEventPartyChangedXml(callId, "agent-002"),
-            
-            // 6. SIP BYE (media ends)
-            createSipByeXml(callId),
-            
-            // 7. Call released
-            createEventReleasedXml(callId)
+        } catch (Exception e) {
+            logger.severe("Call control event simulation error: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Demonstrate manual event processing (for comparison)
+     */
+    private static void demonstrateManualEventProcessing(CTIEventMonitor monitor) {
+        logger.info("\n🔧 DEMONSTRATING MANUAL EVENT PROCESSING");
+        logger.info("=========================================");
+        logger.info("Processing events manually (for comparison with CallControlListener)");
+        
+        String callId = "call-manual-demo";
+        
+        // Sample events that would normally come from CallControlListener
+        String[] manualEvents = {
+            createCallDeliveredXml(callId, "9876543210", "5552000"),
+            createCallEstablishedXml(callId, "agent-005"),
+            createCallTransferredXml(callId, "agent-006"),
+            createCallClearedXml(callId)
         };
         
-        // Process each event in the call flow
-        for (int i = 0; i < callFlowEvents.length; i++) {
-            logger.info(String.format("\n📋 STEP %d: Processing event...", i + 1));
+        // Process each event
+        for (int i = 0; i < manualEvents.length; i++) {
+            logger.info(String.format("\n📋 MANUAL STEP %d: Processing event...", i + 1));
             
             try {
                 CompletableFuture<CTIEventMonitor.ProcessingResult> future = 
-                    monitor.processEvent(callFlowEvents[i]);
+                    monitor.processEvent(manualEvents[i]);
                 
                 CTIEventMonitor.ProcessingResult result = future.get();
                 
@@ -113,11 +183,10 @@ public class CTIEventMonitorDemo {
                     logger.info("   Published: " + (result.isPublishedToConnect() ? "YES" : "NO"));
                 }
                 
-                // Small delay to simulate real-world timing
                 Thread.sleep(500);
                 
             } catch (Exception e) {
-                logger.severe("   Error processing step " + (i + 1) + ": " + e.getMessage());
+                logger.severe("   Error processing manual step " + (i + 1) + ": " + e.getMessage());
             }
         }
     }
@@ -131,14 +200,12 @@ public class CTIEventMonitorDemo {
         
         // Create a batch of events from multiple calls
         String[] batchEvents = {
-            createEventRingingXml("call-batch-001", "1111111111", "5551001"),
-            createEventRingingXml("call-batch-002", "2222222222", "5551002"),
-            createEventQueuedXml("call-batch-001", "queue-sales"),
-            createEventQueuedXml("call-batch-002", "queue-support"),
-            createEventDivertedXml("call-batch-001", "agent-101"),
-            createEventDivertedXml("call-batch-002", "agent-102"),
-            createEventReleasedXml("call-batch-001"),
-            createEventReleasedXml("call-batch-002")
+            createCallDeliveredXml("call-batch-001", "1111111111", "5551001"),
+            createCallDeliveredXml("call-batch-002", "2222222222", "5551002"),
+            createCallEstablishedXml("call-batch-001", "agent-101"),
+            createCallEstablishedXml("call-batch-002", "agent-102"),
+            createCallClearedXml("call-batch-001"),
+            createCallClearedXml("call-batch-002")
         };
         
         try {
@@ -159,84 +226,94 @@ public class CTIEventMonitorDemo {
         }
     }
     
-    // Sample XML generators for different event types
+    /**
+     * Display comprehensive final statistics
+     */
+    private static void displayFinalStatistics(CTIEventMonitor monitor, DMCCSessionManager dmccSession) {
+        logger.info("\n📊 FINAL SYSTEM STATISTICS");
+        logger.info("==========================");
+        
+        // CTI Event Monitor statistics
+        monitor.printStatusReport();
+        
+        // DMCC Session status
+        logger.info("\n📡 DMCC SESSION STATUS:");
+        logger.info("   Connection: " + (dmccSession.isConnected() ? "✅ CONNECTED" : "❌ DISCONNECTED"));
+        
+        // CallControlListener statistics would be shown here
+        logger.info("\n🎧 CALL CONTROL LISTENER STATISTICS:");
+        logger.info("   (Statistics would be available from actual CallControlListener)");
+    }
     
-    private static String createEventRingingXml(String callId, String ani, String dnis) {
+    /**
+     * Clean up resources
+     */
+    private static void cleanupResources(CTIEventMonitor monitor, DMCCSessionManager dmccSession) {
+        logger.info("\n🧹 CLEANING UP RESOURCES");
+        logger.info("========================");
+        
+        try {
+            // Disconnect DMCC session
+            dmccSession.disconnect();
+            
+            // Shutdown CTI Event Monitor
+            monitor.shutdown();
+            
+            logger.info("✅ All resources cleaned up successfully");
+            
+        } catch (Exception e) {
+            logger.severe("Error during cleanup: " + e.getMessage());
+        }
+    }
+    
+    // XML generators for different call control event types
+    
+    private static String createCallDeliveredXml(String callId, String ani, String dnis) {
         return String.format(
             "<EventRinging xmlns=\"http://www.avaya.com/csta\">" +
             "<callId>%s</callId>" +
             "<ani>%s</ani>" +
             "<dnis>%s</dnis>" +
             "<timestamp>%d</timestamp>" +
+            "<eventSource>CallControlListener</eventSource>" +
             "</EventRinging>",
             callId, ani, dnis, System.currentTimeMillis()
         );
     }
     
-    private static String createEventQueuedXml(String callId, String queueId) {
+    private static String createCallEstablishedXml(String callId, String agentId) {
         return String.format(
-            "<EventQueued xmlns=\"http://www.avaya.com/csta\">" +
-            "<callId>%s</callId>" +
-            "<queueId>%s</queueId>" +
-            "<timestamp>%d</timestamp>" +
-            "</EventQueued>",
-            callId, queueId, System.currentTimeMillis()
-        );
-    }
-    
-    private static String createEventDivertedXml(String callId, String agentId) {
-        return String.format(
-            "<EventDiverted xmlns=\"http://www.avaya.com/csta\">" +
+            "<EventEstablished xmlns=\"http://www.avaya.com/csta\">" +
             "<callId>%s</callId>" +
             "<agentId>%s</agentId>" +
             "<timestamp>%d</timestamp>" +
-            "</EventDiverted>",
+            "<eventSource>CallControlListener</eventSource>" +
+            "</EventEstablished>",
             callId, agentId, System.currentTimeMillis()
         );
     }
     
-    private static String createEventPartyChangedXml(String callId, String newAgentId) {
+    private static String createCallTransferredXml(String callId, String newAgentId) {
         return String.format(
-            "<EventPartyChanged xmlns=\"http://www.avaya.com/csta\">" +
+            "<EventTransferred xmlns=\"http://www.avaya.com/csta\">" +
             "<callId>%s</callId>" +
             "<agentId>%s</agentId>" +
-            "<changeType>TRANSFER</changeType>" +
+            "<transferType>BLIND</transferType>" +
             "<timestamp>%d</timestamp>" +
-            "</EventPartyChanged>",
+            "<eventSource>CallControlListener</eventSource>" +
+            "</EventTransferred>",
             callId, newAgentId, System.currentTimeMillis()
         );
     }
     
-    private static String createEventReleasedXml(String callId) {
+    private static String createCallClearedXml(String callId) {
         return String.format(
             "<EventReleased xmlns=\"http://www.avaya.com/csta\">" +
             "<callId>%s</callId>" +
             "<reason>NORMAL_CLEARING</reason>" +
             "<timestamp>%d</timestamp>" +
+            "<eventSource>CallControlListener</eventSource>" +
             "</EventReleased>",
-            callId, System.currentTimeMillis()
-        );
-    }
-    
-    private static String createSipInviteXml(String callId) {
-        return String.format(
-            "<SipInvite>" +
-            "<callId>%s</callId>" +
-            "<mediaType>AUDIO</mediaType>" +
-            "<codec>G711</codec>" +
-            "<timestamp>%d</timestamp>" +
-            "</SipInvite>",
-            callId, System.currentTimeMillis()
-        );
-    }
-    
-    private static String createSipByeXml(String callId) {
-        return String.format(
-            "<SipBye>" +
-            "<callId>%s</callId>" +
-            "<reason>NORMAL_CLEARING</reason>" +
-            "<timestamp>%d</timestamp>" +
-            "</SipBye>",
             callId, System.currentTimeMillis()
         );
     }
