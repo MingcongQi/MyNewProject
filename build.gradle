@@ -16,18 +16,34 @@ repositories {
 
 // Set the main class for the application
 application {
-    mainClass = 'com.example.lambdaclient.SimpleLambdaClient'
+    mainClass = 'com.example.lambdaclient.CTIEventMonitorApplication'
 }
 
 dependencies {
     // JSON processing
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.0'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.0'
     
-    // Logging (simple)
-    implementation 'org.slf4j:slf4j-simple:2.0.9'
+    // HTTP Client (Java 11+ built-in, but explicit for clarity)
+    // implementation 'java.net.http' // Built into JDK 11+
+    
+    // XML processing for DMCC API
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.8'
+    
+    // Logging
+    implementation 'java.util.logging:java.util.logging' // Built into JDK
+    
+    // SSL/TLS support
+    // implementation 'javax.net.ssl' // Built into JDK
+    
+    // Concurrent utilities
+    // implementation 'java.util.concurrent' // Built into JDK
     
     // Testing
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
+    testImplementation 'org.mockito:mockito-core:5.8.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.8.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
