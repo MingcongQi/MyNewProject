@@ -321,11 +321,29 @@ public class CSTACallControlListener /* implements CallControlListener */ {
     public void retrieved(Object retrievedEvent /* RetrievedEvent event */) {
         try {
             logger.info("▶️ RETRIEVED EVENT: " + extractCallId(retrievedEvent));
+            
+            // Create ECMA-269 compliant event (placeholder implementation)
             String eventXml = convertToEventXml("RetrievedEvent", retrievedEvent);
             processCallControlEvent(eventXml);
+            
         } catch (Exception e) {
             logger.severe("Error processing retrieved event: " + e.getMessage());
         }
+    }
+    
+    /**
+     * Additional methods for compatibility with DMCCSessionManager
+     */
+    public void callDelivered(Object deliveredEvent) {
+        delivered(deliveredEvent);
+    }
+    
+    public void callEstablished(Object establishedEvent) {
+        established(establishedEvent);
+    }
+    
+    public void callTransferred(Object transferredEvent) {
+        transferred(transferredEvent);
     }
     
     /**
@@ -335,25 +353,31 @@ public class CSTACallControlListener /* implements CallControlListener */ {
         try {
             // Convert to XML for processing
             String eventXml = cstaEvent.toXML();
-            
-            ctiEventMonitor.processEvent(eventXml)
-                .thenAccept(result -> {
-                    if (result.isProcessed()) {
-                        logger.fine("✅ Call control event processed: " + result.getEventResult().getEventType());
-                        if (result.isPublishedToConnect()) {
-                            logger.fine("📤 Event published to Connect");
-                        }
-                    } else {
-                        logger.warning("❌ Call control event processing failed: " + result.getMessage());
-                    }
-                })
-                .exceptionally(throwable -> {
-                    logger.severe("💥 Call control event processing exception: " + throwable.getMessage());
-                    return null;
-                });
+            processCallControlEvent(eventXml);
         } catch (Exception e) {
             logger.severe("Error processing CSTA event: " + e.getMessage());
         }
+    }
+    
+    /**
+     * Process the call control event through the CTI Event Monitor (XML version)
+     */
+    private void processCallControlEvent(String eventXml) {
+        ctiEventMonitor.processEvent(eventXml)
+            .thenAccept(result -> {
+                if (result.isProcessed()) {
+                    logger.fine("✅ Call control event processed: " + result.getEventResult().getEventType());
+                    if (result.isPublishedToConnect()) {
+                        logger.fine("📤 Event published to Connect");
+                    }
+                } else {
+                    logger.warning("❌ Call control event processing failed: " + result.getMessage());
+                }
+            })
+            .exceptionally(throwable -> {
+                logger.severe("💥 Call control event processing exception: " + throwable.getMessage());
+                return null;
+            });
     }
     
     /**

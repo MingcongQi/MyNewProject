@@ -27,7 +27,7 @@ public class CSTADataTypes {
     "callID",
     "deviceID"
 })
-public class ConnectionID {
+class ConnectionID {
     
     @XmlElement(name = "callID", namespace = CSTAEvent.CSTA_NAMESPACE, required = true)
     @NotNull
@@ -85,7 +85,7 @@ public class ConnectionID {
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DeviceIDType", namespace = CSTAEvent.CSTA_NAMESPACE)
-public class DeviceID {
+class DeviceID {
     
     @XmlValue
     private String value;
@@ -129,7 +129,7 @@ public class DeviceID {
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CallIDType", namespace = CSTAEvent.CSTA_NAMESPACE)
-public class CallID {
+class CallID {
     
     @XmlValue
     private String value;
@@ -171,7 +171,7 @@ public class CallID {
  * Local Connection State
  * From ECMA-269: "LocalConnectionState indicates the state of a connection"
  */
-public enum LocalConnectionState {
+enum LocalConnectionState {
     /**
      * The connection is in the null state
      */
@@ -231,7 +231,7 @@ public enum LocalConnectionState {
  * CSTA Cause
  * From ECMA-269: "Cause indicates the reason for an event"
  */
-public enum CSTACause {
+enum CSTACause {
     /**
      * Normal call clearing
      */
@@ -340,7 +340,7 @@ public enum CSTACause {
     "callID",
     "deviceID"
 })
-public class ReleasedConnection {
+class ReleasedConnection {
     
     @XmlElement(name = "callID", namespace = CSTAEvent.CSTA_NAMESPACE, required = true)
     @NotNull
@@ -398,7 +398,7 @@ public class ReleasedConnection {
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ReleasingDeviceType", namespace = CSTAEvent.CSTA_NAMESPACE)
-public class ReleasingDevice {
+class ReleasingDevice {
     
     @XmlValue
     private String value;
