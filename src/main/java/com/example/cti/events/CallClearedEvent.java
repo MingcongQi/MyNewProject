@@ -23,161 +23,77 @@ import java.util.Objects;
  * ECMA-269 Standard Reference:
  * @see <a href="https://www.ecma-international.org/computer-supported-telecommunications-applications-csta/">ECMA-269 Section 17.2.2</a>
  */
-@XmlRootElement(name = "CallClearedEvent", namespace = CSTAEvent.CSTA_NAMESPACE)
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CallClearedEventType", namespace = CSTAEvent.CSTA_NAMESPACE, propOrder = {
-    "clearedCall",
-    "localConnectionInfo",
-    "cause"
-})
-public class CallClearedEvent extends CSTAEvent {
+public class CallClearedEvent extends CTIEvent {
     
     /**
-     * Cleared Call
-     * From ECMA-269: "clearedCall identifies the call that has been cleared"
+     * Cleared Call ID (CSTA compliant)
      */
-    @XmlElement(name = "clearedCall", namespace = CSTA_NAMESPACE, required = true)
-    @NotNull
-    private CallID clearedCall;
+    private String clearedCallId;
     
     /**
      * Local Connection Information
-     * From ECMA-269: "localConnectionInfo provides additional information about the connection"
      */
-    @XmlElement(name = "localConnectionInfo", namespace = CSTA_NAMESPACE)
     private LocalConnectionState localConnectionInfo;
     
     /**
      * Cause
-     * From ECMA-269: "cause indicates the reason for the call being cleared"
      */
-    @XmlElement(name = "cause", namespace = CSTA_NAMESPACE)
     private CSTACause cause;
     
-    // Additional fields for enhanced call tracking (not part of ECMA-269 standard)
-    @XmlTransient
+    // Additional fields for enhanced call tracking
     private String disconnectReason;
-    
-    @XmlTransient
     private long callDuration;
-    
-    @XmlTransient
     private String releasingDevice;
     
     /**
-     * Default constructor for JAXB
+     * Default constructor
      */
     public CallClearedEvent() {
         super();
+        this.eventType = "CallCleared";
     }
     
     /**
-     * Constructor with required fields
+     * Constructor with call ID and disconnect reason
      * 
-     * @param monitorCrossRefID Monitor cross reference ID
-     * @param clearedCall Call that has been cleared
+     * @param callId Call ID
+     * @param disconnectReason Disconnect reason
      */
-    public CallClearedEvent(String monitorCrossRefID, CallID clearedCall) {
-        super(monitorCrossRefID);
-        this.clearedCall = clearedCall;
+    public CallClearedEvent(String callId, String disconnectReason) {
+        super(callId, Instant.now());
+        this.eventType = "CallCleared";
+        this.clearedCallId = callId;
+        this.disconnectReason = disconnectReason;
+        this.cause = mapDisconnectReasonToCause(disconnectReason);
     }
     
     /**
-     * Constructor with cause
+     * Constructor with call ID, device ID, and disconnect reason
      * 
-     * @param monitorCrossRefID Monitor cross reference ID
-     * @param clearedCall Call that has been cleared
-     * @param cause Cause of the call being cleared
-     */
-    public CallClearedEvent(String monitorCrossRefID, CallID clearedCall, CSTACause cause) {
-        super(monitorCrossRefID);
-        this.clearedCall = clearedCall;
-        this.cause = cause;
-    }
-    
-    /**
-     * Full constructor
-     * 
-     * @param monitorCrossRefID Monitor cross reference ID
-     * @param eventTime Event time
-     * @param eventSequenceNumber Event sequence number
-     * @param clearedCall Call that has been cleared
-     * @param localConnectionInfo Local connection information
-     * @param cause Cause of the call being cleared
-     */
-    public CallClearedEvent(String monitorCrossRefID, Instant eventTime, Long eventSequenceNumber,
-                           CallID clearedCall, LocalConnectionState localConnectionInfo, CSTACause cause) {
-        super(monitorCrossRefID, eventTime, eventSequenceNumber);
-        this.clearedCall = clearedCall;
-        this.localConnectionInfo = localConnectionInfo;
-        this.cause = cause;
-    }
-    
-    /**
-     * Legacy constructor for backward compatibility
-     * 
-     * @param callId Call ID string
-     * @param deviceId Device ID string
+     * @param callId Call ID
+     * @param deviceId Device ID
      * @param disconnectReason Disconnect reason
      */
     public CallClearedEvent(String callId, String deviceId, String disconnectReason) {
-        super("legacy-monitor");
-        this.clearedCall = new CallID(callId);
+        super(callId, deviceId, "CallCleared");
+        this.clearedCallId = callId;
         this.releasingDevice = deviceId;
         this.disconnectReason = disconnectReason;
         this.cause = mapDisconnectReasonToCause(disconnectReason);
     }
     
-    @Override
-    public String getCSTAEventType() {
-        return "CallClearedEvent";
-    }
-    
-    @Override
-    public CSTAEventCategory getEventCategory() {
-        return CSTAEventCategory.CALL_CONTROL;
-    }
-    
-    @Override
-    public int getEventPriority() {
-        return 3; // High priority - call has ended
-    }
-    
-    @Override
-    public boolean isValid() {
-        return super.isValid() && clearedCall != null;
-    }
-    
-    @Override
-    public String toXML() {
-        StringBuilder xml = new StringBuilder();
-        xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        xml.append("<CallClearedEvent xmlns=\"").append(CSTA_NAMESPACE).append("\">");
-        
-        // Common CSTA event fields
-        xml.append("<monitorCrossRefID>").append(getMonitorCrossRefID()).append("</monitorCrossRefID>");
-        if (getEventTime() != null) {
-            xml.append("<eventTime>").append(getEventTime().toString()).append("</eventTime>");
-        }
-        if (getEventSequenceNumber() != null) {
-            xml.append("<eventSequenceNumber>").append(getEventSequenceNumber()).append("</eventSequenceNumber>");
-        }
-        
-        // CallClearedEvent specific fields
-        if (clearedCall != null) {
-            xml.append("<clearedCall>").append(clearedCall.getValue()).append("</clearedCall>");
-        }
-        
-        if (localConnectionInfo != null) {
-            xml.append("<localConnectionInfo>").append(localConnectionInfo.name()).append("</localConnectionInfo>");
-        }
-        
-        if (cause != null) {
-            xml.append("<cause>").append(cause.name()).append("</cause>");
-        }
-        
-        xml.append("</CallClearedEvent>");
-        return xml.toString();
+    /**
+     * CSTA compliant constructor
+     * 
+     * @param monitorCrossRefID Monitor cross reference ID
+     * @param clearedCallId Call that has been cleared
+     * @param cause Cause of the call being cleared
+     */
+    public CallClearedEvent(String monitorCrossRefID, String clearedCallId, CSTACause cause) {
+        super(clearedCallId, Instant.now());
+        this.eventType = "CallCleared";
+        this.clearedCallId = clearedCallId;
+        this.cause = cause;
     }
     
     /**
@@ -198,12 +114,12 @@ public class CallClearedEvent extends CSTAEvent {
     
     // Getters and Setters
     
-    public CallID getClearedCall() {
-        return clearedCall;
+    public String getClearedCallId() {
+        return clearedCallId;
     }
     
-    public void setClearedCall(CallID clearedCall) {
-        this.clearedCall = clearedCall;
+    public void setClearedCallId(String clearedCallId) {
+        this.clearedCallId = clearedCallId;
     }
     
     public LocalConnectionState getLocalConnectionInfo() {
@@ -221,8 +137,6 @@ public class CallClearedEvent extends CSTAEvent {
     public void setCause(CSTACause cause) {
         this.cause = cause;
     }
-    
-    // Legacy getters for backward compatibility
     
     public String getDisconnectReason() {
         return disconnectReason != null ? disconnectReason : 
@@ -250,20 +164,6 @@ public class CallClearedEvent extends CSTAEvent {
         this.releasingDevice = releasingDevice;
     }
     
-    /**
-     * Legacy method for backward compatibility
-     */
-    public String getCallId() {
-        return clearedCall != null ? clearedCall.getValue() : null;
-    }
-    
-    /**
-     * Legacy method for backward compatibility
-     */
-    public Instant getTimestamp() {
-        return getEventTime();
-    }
-    
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -271,7 +171,7 @@ public class CallClearedEvent extends CSTAEvent {
         if (!super.equals(o)) return false;
         CallClearedEvent that = (CallClearedEvent) o;
         return callDuration == that.callDuration &&
-               Objects.equals(clearedCall, that.clearedCall) &&
+               Objects.equals(clearedCallId, that.clearedCallId) &&
                localConnectionInfo == that.localConnectionInfo &&
                cause == that.cause &&
                Objects.equals(disconnectReason, that.disconnectReason) &&
@@ -280,15 +180,16 @@ public class CallClearedEvent extends CSTAEvent {
     
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), clearedCall, localConnectionInfo, cause, 
+        return Objects.hash(super.hashCode(), clearedCallId, localConnectionInfo, cause, 
                           disconnectReason, callDuration, releasingDevice);
     }
     
     @Override
     public String toString() {
-        return String.format("CallClearedEvent{clearedCall=%s, localConnectionInfo=%s, cause=%s, " +
-                           "disconnectReason='%s', callDuration=%d, releasingDevice='%s', eventTime=%s}",
-                           clearedCall, localConnectionInfo, cause, disconnectReason, callDuration, 
-                           releasingDevice, getEventTime());
+        return String.format("CallClearedEvent{callId='%s', clearedCallId='%s', localConnectionInfo=%s, cause=%s, " +
+                           "disconnectReason='%s', callDuration=%d, releasingDevice='%s', timestamp=%s}",
+                           callId, clearedCallId, localConnectionInfo, cause, disconnectReason, callDuration, 
+                           releasingDevice, timestamp);
     }
+}
 }
