@@ -192,4 +192,3 @@ public class CallClearedEvent extends CTIEvent {
                            releasingDevice, timestamp);
     }
 }
-}
