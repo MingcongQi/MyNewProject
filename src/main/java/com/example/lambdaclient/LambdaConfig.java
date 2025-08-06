@@ -5,7 +5,7 @@ package com.example.lambdaclient;
  */
 public class LambdaConfig {
     private static LambdaConfig instance;
-    private String functionUrl;
+    private String functionUrl = "https://default-lambda-url.lambda-url.us-east-1.on.aws/";
     private String region = "us-east-1";
     private int timeoutSeconds = 30;
     
