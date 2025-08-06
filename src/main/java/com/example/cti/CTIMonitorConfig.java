@@ -14,6 +14,7 @@ public class CTIMonitorConfig {
     // Processing Configuration
     private int eventProcessingThreads = 5;
     private int maxRetryAttempts = 3;
+    private int maxQueueSize = 1000;
     private long retryDelayMs = 1000;
     private long heartbeatIntervalMs = 30000;
     
@@ -71,6 +72,18 @@ public class CTIMonitorConfig {
         this.heartbeatIntervalMs = heartbeatIntervalMs;
     }
     
+    public void setHeartbeatInterval(int heartbeatInterval) {
+        this.heartbeatIntervalMs = heartbeatInterval * 1000L; // Convert seconds to milliseconds
+    }
+    
+    public int getMaxQueueSize() {
+        return maxQueueSize;
+    }
+    
+    public void setMaxQueueSize(int maxQueueSize) {
+        this.maxQueueSize = maxQueueSize;
+    }
+    
     @Override
     public String toString() {
         return "CTIMonitorConfig{" +
@@ -94,8 +107,10 @@ public class CTIMonitorConfig {
         private String applicationName = "CTI-Event-Monitor";
         private String deviceName;
         private boolean useSSL = true;
+        private boolean secure = true;
         private int connectionTimeoutMs = 30000;
         private int readTimeoutMs = 60000;
+        private int retryDelayMs = 5000;
         
         // Getters and Setters
         public String getServerHost() {
@@ -168,6 +183,22 @@ public class CTIMonitorConfig {
         
         public void setReadTimeoutMs(int readTimeoutMs) {
             this.readTimeoutMs = readTimeoutMs;
+        }
+        
+        public boolean isSecure() {
+            return secure;
+        }
+        
+        public void setSecure(boolean secure) {
+            this.secure = secure;
+        }
+        
+        public int getRetryDelayMs() {
+            return retryDelayMs;
+        }
+        
+        public void setRetryDelayMs(int retryDelayMs) {
+            this.retryDelayMs = retryDelayMs;
         }
         
         @Override

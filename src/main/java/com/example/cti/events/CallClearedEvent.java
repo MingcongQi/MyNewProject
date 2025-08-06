@@ -60,7 +60,8 @@ public class CallClearedEvent extends CTIEvent {
      * @param disconnectReason Disconnect reason
      */
     public CallClearedEvent(String callId, String disconnectReason) {
-        super(callId, Instant.now());
+        super();
+        this.callId = callId;
         this.eventType = "CallCleared";
         this.clearedCallId = callId;
         this.disconnectReason = disconnectReason;
@@ -90,7 +91,8 @@ public class CallClearedEvent extends CTIEvent {
      * @param cause Cause of the call being cleared
      */
     public CallClearedEvent(String monitorCrossRefID, String clearedCallId, CSTACause cause) {
-        super(clearedCallId, Instant.now());
+        super();
+        this.callId = clearedCallId;
         this.eventType = "CallCleared";
         this.clearedCallId = clearedCallId;
         this.cause = cause;

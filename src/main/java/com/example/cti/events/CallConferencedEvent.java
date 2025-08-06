@@ -24,14 +24,14 @@ public class CallConferencedEvent extends CTIEvent {
     public CallConferencedEvent(String callId, String deviceId, String conferenceParticipant) {
         super(callId, deviceId, "CallConferenced");
         this.conferenceParticipant = conferenceParticipant;
-        this.timestamp = Instant.now();
+        this.timestamp = System.currentTimeMillis();
     }
     
     public CallConferencedEvent(String callId, String deviceId, String conferenceParticipant, String conferenceId) {
         super(callId, deviceId, "CallConferenced");
         this.conferenceParticipant = conferenceParticipant;
         this.conferenceId = conferenceId;
-        this.timestamp = Instant.now();
+        this.timestamp = System.currentTimeMillis();
     }
     
     // Getters and Setters

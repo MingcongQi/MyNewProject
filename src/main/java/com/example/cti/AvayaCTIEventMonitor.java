@@ -7,6 +7,7 @@ import com.example.cti.connect.ConnectEventPublisher;
 import com.example.cti.connect.ConnectCallEvent;
 import com.example.cti.connect.ConnectAgentEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.Instant;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -446,7 +447,7 @@ public class AvayaCTIEventMonitor {
         ConnectAgentEvent connectEvent = new ConnectAgentEvent();
         
         connectEvent.setAgentId(agentEvent.getAgentId());
-        connectEvent.setTimestamp(agentEvent.getTimestamp());
+        connectEvent.setTimestamp(Instant.ofEpochMilli(agentEvent.getTimestamp()));
         connectEvent.setEventType("AGENT_STATE_CHANGE");
         connectEvent.setOldState(agentEvent.getOldState());
         connectEvent.setNewState(agentEvent.getNewState());

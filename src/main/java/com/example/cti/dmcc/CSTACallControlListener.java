@@ -116,7 +116,8 @@ public class CSTACallControlListener /* implements CallControlListener */ {
             CallClearedEvent cstaEvent = createCallClearedEvent(callClearedEvent);
             
             // Process through CTI Event Monitor
-            processCallControlEvent(cstaEvent);
+            String eventXml = convertToEventXml("CallClearedEvent", cstaEvent);
+            processCallControlEvent(eventXml);
             
         } catch (Exception e) {
             logger.severe("Error processing callCleared event: " + e.getMessage());
@@ -463,7 +464,7 @@ public class CSTACallControlListener /* implements CallControlListener */ {
             CSTACause cause = mapDisconnectReasonToCause(disconnectReason);
             
             // Create the event
-            CallClearedEvent event = new CallClearedEvent("monitor-" + System.currentTimeMillis(), clearedCall, cause);
+            CallClearedEvent event = new CallClearedEvent("monitor-" + System.currentTimeMillis(), clearedCall.getCallIdentifier(), cause);
             event.setLocalConnectionInfo(LocalConnectionState.NULL);
             
             return event;
@@ -473,7 +474,7 @@ public class CSTACallControlListener /* implements CallControlListener */ {
             // Return minimal event
             String callId = extractCallId(rawEvent);
             CallID clearedCall = new CallID(callId);
-            return new CallClearedEvent("monitor-error", clearedCall);
+            return new CallClearedEvent("monitor-error", clearedCall.getCallIdentifier());
         }
     }
     

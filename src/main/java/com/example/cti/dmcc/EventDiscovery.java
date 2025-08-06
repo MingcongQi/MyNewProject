@@ -203,7 +203,7 @@ public class EventDiscovery {
     /**
      * Extract event type from XML content
      */
-    private String discoverEventType(String xmlContent) {
+    public String discoverEventType(String xmlContent) {
         // Try each pattern to extract event type
         for (Pattern pattern : EVENT_PATTERNS) {
             Matcher matcher = pattern.matcher(xmlContent);
@@ -436,6 +436,23 @@ public class EventDiscovery {
                 return true;
             }
             return false;
+        });
+    }
+    
+    /**
+     * Get discovered events map
+     */
+    public Map<String, EventMetadata> getDiscoveredEvents() {
+        return discoveredEvents;
+    }
+    
+    /**
+     * Print discovered events for debugging
+     */
+    public void printDiscoveredEvents() {
+        logger.info("📊 DISCOVERED EVENTS SUMMARY (" + discoveredEvents.size() + " types):");
+        discoveredEvents.forEach((eventType, metadata) -> {
+            logger.info("  - " + eventType + ": " + metadata.getOccurrenceCount() + " occurrences");
         });
     }
 }

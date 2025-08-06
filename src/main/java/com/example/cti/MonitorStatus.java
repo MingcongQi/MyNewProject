@@ -33,6 +33,10 @@ public class MonitorStatus {
         this.status = connected ? "ACTIVE" : "DISCONNECTED";
     }
     
+    public boolean isDmccConnected() {
+        return connected;
+    }
+    
     public int getActiveCalls() {
         return activeCalls;
     }

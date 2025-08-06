@@ -29,7 +29,7 @@ public class AgentStateChangedEvent extends CTIEvent {
         this.agentId = agentId;
         this.oldState = oldState;
         this.newState = newState;
-        this.timestamp = Instant.now();
+        this.timestamp = System.currentTimeMillis();
     }
     
     public AgentStateChangedEvent(String agentId, String deviceId, String oldState, String newState, String reasonCode) {
