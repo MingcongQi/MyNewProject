@@ -30,7 +30,7 @@ import java.util.Objects;
     "localConnectionInfo",
     "cause"
 })
-class DivertedEvent extends CSTAEvent {
+public class DivertedEvent extends CSTAEvent {
     
     @XmlElement(name = "connection", namespace = CSTA_NAMESPACE, required = true)
     @NotNull
@@ -122,7 +122,7 @@ class DivertedEvent extends CSTAEvent {
     "localConnectionInfo",
     "cause"
 })
-class TransferredEvent extends CSTAEvent {
+public class TransferredEvent extends CSTAEvent {
     
     @XmlElement(name = "primaryOldCall", namespace = CSTA_NAMESPACE, required = true)
     @NotNull
@@ -218,7 +218,7 @@ class TransferredEvent extends CSTAEvent {
     "localConnectionInfo",
     "cause"
 })
-class ConferencedEvent extends CSTAEvent {
+public class ConferencedEvent extends CSTAEvent {
     
     @XmlElement(name = "primaryOldCall", namespace = CSTA_NAMESPACE, required = true)
     @NotNull
@@ -315,7 +315,7 @@ class ConferencedEvent extends CSTAEvent {
     "localConnectionInfo",
     "cause"
 })
-class QueuedEvent extends CSTAEvent {
+public class QueuedEvent extends CSTAEvent {
     
     @XmlElement(name = "queuedConnection", namespace = CSTA_NAMESPACE, required = true)
     @NotNull
